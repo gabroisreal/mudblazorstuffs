@@ -6,7 +6,7 @@
 <div style="margin-bottom: auto; display: flex;">
     <div>upload file: </div>
 
-    <MudFileUpload T="IBrowserFile" OnFilesChanged="FileUploaded">
+    <MudFileUpload T="IBrowserFile" FilesChanged="UploadFiles">
         <ActivatorContent>
             <MudButton Variant="Variant.Filled"
                     Color="Color.Primary"
@@ -59,9 +59,9 @@
 
     public int readersThatExist = 0;
 
-    public async Task FileUploaded(InputFileChangeEventArgs  e)
+    public async Task FileUploaded(IBrowserFile  e)
     {
-        var browserFile = e.File;
+        var browserFile = e;
         
 
         if (browserFile != null)
@@ -121,6 +121,12 @@
         {
             Console.WriteLine("already exits");
         }
+    }
+
+
+    private void UploadFiles(IBrowserFile file)
+    {
+        FileUploaded(file);
     }
 
     class ReaderEvent
