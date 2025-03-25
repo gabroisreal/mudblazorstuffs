@@ -2,11 +2,19 @@
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 
-<h1>Here you will be uploading files (cool right)</h1>
-
+<MudText Typo="Typo.h3" GutterBottom="true">Here you will be uploading files (cool right)</MudText>
 <div style="margin-bottom: auto; display: flex;">
     <div>upload file: </div>
-    <InputFile OnChange="FileUploaded" />
+
+    <MudFileUpload T="IBrowserFile" OnFilesChanged="FileUploaded">
+        <ActivatorContent>
+            <MudButton Variant="Variant.Filled"
+                    Color="Color.Primary"
+                    StartIcon="@Icons.Material.Filled.CloudUpload">
+                Upload Files
+            </MudButton>
+    </ActivatorContent>
+</MudFileUpload>
 </div>
 
 
@@ -51,9 +59,9 @@
 
     public int readersThatExist = 0;
 
-    public async Task FileUploaded(InputFileChangeEventArgs e)
+    public async Task FileUploaded(InputFileChangeEventArgs  e)
     {
-        var browserFile = e.File;
+        var browserFile = e;
         
 
         if (browserFile != null)
