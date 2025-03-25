@@ -61,7 +61,7 @@
 
     public async Task FileUploaded(InputFileChangeEventArgs  e)
     {
-        var browserFile = e;
+        var browserFile = e.File;
         
 
         if (browserFile != null)
