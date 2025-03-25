@@ -39,3 +39,4 @@ C:\Users\gf1043724\Desktop\mudblazor\MyApplication\obj\Debug\net8.0\refint\MyApp
 C:\Users\gf1043724\Desktop\mudblazor\MyApplication\obj\Debug\net8.0\MyApplication.pdb
 C:\Users\gf1043724\Desktop\mudblazor\MyApplication\obj\Debug\net8.0\MyApplication.genruntimeconfig.cache
 C:\Users\gf1043724\Desktop\mudblazor\MyApplication\obj\Debug\net8.0\ref\MyApplication.dll
+C:\Users\gf1043724\Desktop\mudblazor\MyApplication\obj\Debug\net8.0\MyApplication.sourcelink.json
