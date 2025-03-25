@@ -1,0 +1,161 @@
+@page "/fileupload"
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<h1>Here you will be uploading files (cool right)</h1>
+
+<div style="margin-bottom: auto; display: flex;">
+    <div>upload file: </div>
+    <InputFile OnChange="FileUploaded" />
+</div>
+
+
+<h2>Selected file</h2>
+<div>
+    <div>File name: @FileName</div>
+    <div>File size: @FileSize.ToString("n0") bytes</div>
+    <div>File type: @FileType</div>
+    <div>Last modified: @LastModified</div>
+</div>
+
+
+<p>@testingThing</p>
+
+<p>@readersThatExist</p>
+
+<ul>
+    @foreach(KeyValuePair<string , string> kvp in readerDictionary)
+    {
+        <li>@kvp.Key , @kvp.Value</li>
+    }
+</ul>
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div>Error: @ErrorMessage</div>
+}
+
+
+@code {
+    public string FileName { get; set; } = "";
+    public long FileSize { get; set; }
+    public string FileType { get; set; } = "";
+    public DateTimeOffset LastModified { get; set; }
+    public string ErrorMessage { get; set; } = "";
+
+    const int MAX_FILESIZE = 10000 * 1024; // 2 MB
+    private List<ReaderEvent> masterList = new List<ReaderEvent>();
+
+
+    public string testingThing = "";
+
+    public int readersThatExist = 0;
+
+    public async Task FileUploaded(InputFileChangeEventArgs e)
+    {
+        var browserFile = e.File;
+        
+
+        if (browserFile != null)
+        {
+            
+            FileSize = browserFile.Size;
+            FileType = browserFile.ContentType;
+            FileName = browserFile.Name;
+            LastModified = browserFile.LastModified;
+
+            try
+            {
+                var fileStream = browserFile.OpenReadStream(MAX_FILESIZE);
+
+
+                var destinationStream = new FileStream(FileName, FileMode.Create);
+                await fileStream.CopyToAsync(destinationStream);
+                destinationStream.Close();
+                StreamReader streamReader = new StreamReader(FileName);
+                List<string[]> lineList = new List<string[]>();
+                string line = streamReader.ReadLine();
+                line = streamReader.ReadLine(); //skips first line
+                while(line != null)
+                {
+                    lineList.Add(line.Split(","));
+                    line = streamReader.ReadLine();
+                }
+                foreach(string[] r in lineList)
+                    {
+                        if(r.Length >= 6)
+                        {
+                            readersThatExist++;    
+                            ReaderEvent a = new ReaderEvent(r[0],r[1],r[2],r[3],r[4],r[5]);
+                            masterList.Add(a);
+                        }
+                    }
+                foreach(ReaderEvent _reader in masterList)
+                {
+                    CreateDictionary(_reader);
+                }
+            }
+            catch (Exception exception)
+            {
+                ErrorMessage = exception.Message;
+            }
+        }
+    }
+
+    private Dictionary<string, string> readerDictionary = new Dictionary<string, string>();
+    private void CreateDictionary(ReaderEvent r)
+    {
+        try
+        {
+            readerDictionary.Add(r.DEVID, r.MACHINE);
+        }
+        catch
+        {
+            Console.WriteLine("already exits");
+        }
+    }
+
+    class ReaderEvent
+    {
+        private string EVENT_TIME_UTC;
+        private string LOCATION;
+        private string READERDESC;
+        private string IDHASH;
+        public string DEVID;
+        public string MACHINE;
+
+        public ReaderEvent()
+        {
+            EVENT_TIME_UTC = "";
+
+            LOCATION = "";
+
+            READERDESC = "";
+
+            IDHASH = "";
+
+            DEVID = "";
+
+            MACHINE = "";
+        }
+
+        public ReaderEvent(string time, string loc, string desc, string id, string devid, string machine)
+        {
+            EVENT_TIME_UTC = time;
+            LOCATION = loc;
+            READERDESC = desc;
+            IDHASH = id;
+            DEVID = devid;
+            MACHINE = machine;
+
+        }
+
+        public override string ToString()
+        {
+            return $"{EVENT_TIME_UTC} , {LOCATION} , {READERDESC}, {IDHASH}, {DEVID}, {MACHINE}";
+        }
+
+
+        }
+    }
+}
